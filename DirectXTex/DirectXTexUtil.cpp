@@ -124,7 +124,13 @@ namespace
     inline void * _aligned_malloc(size_t size, size_t alignment)
     {
         size = (size + alignment - 1) & ~(alignment - 1);
+    #ifdef __APPLE__
+        void *ptr;
+        posix_memalign(&ptr, alignment, size);
+        return ptr;
+    #else
         return std::aligned_alloc(alignment, size);
+    #endif
     }
 
 #define _aligned_free free
