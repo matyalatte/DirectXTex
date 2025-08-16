@@ -1610,7 +1610,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                 {
                     printf("\nWARNING: Image is already using straight alpha\n");
                 }
-                else if (!info.IsPMAlpha())
+                else if (!info.IsPMAlpha() && info.GetAlphaMode() != TEX_ALPHA_MODE_UNKNOWN)
                 {
                     printf("\nWARNING: Image is not using premultipled alpha\n");
                 }
