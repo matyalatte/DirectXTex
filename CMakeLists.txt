@@ -57,6 +57,7 @@ option(BUILD_FUZZING "Build for fuzz testing" OFF)
 
 # Includes the functions for loading/saving OpenEXR files at runtime
 option(ENABLE_OPENEXR_SUPPORT "Build with OpenEXR support" OFF)
+option(BUILD_OPENEXR "Build OpenEXR from source" OFF)
 
 # See https://www.ijg.org/
 option(ENABLE_LIBJPEG_SUPPORT "Build with libjpeg support" OFF)
@@ -276,8 +277,23 @@ if(BC_USE_OPENMP)
 endif()
 
 if(ENABLE_OPENEXR_SUPPORT)
-  find_package(OpenEXR REQUIRED)
-  target_link_libraries(${PROJECT_NAME} PUBLIC OpenEXR::OpenEXR)
+    if(BUILD_OPENEXR)
+        include(FetchContent)
+        set(OPENEXR_BUILD_TOOLS OFF)
+        set(OPENEXR_BUILD_EXAMPLES OFF)
+        set(OPENEXR_FORCE_INTERNAL_DEFLATE ON)
+        set(OPENEXR_FORCE_INTERNAL_OPENJPH ON)
+        set(OPENEXR_FORCE_INTERNAL_IMATH ON)
+        FetchContent_Declare(
+            openexr
+            GIT_REPOSITORY https://github.com/AcademySoftwareFoundation/openexr.git
+            GIT_TAG v3.4.4
+        )
+        FetchContent_MakeAvailable(openexr)
+    else()
+        find_package(OpenEXR REQUIRED)
+    endif()
+    target_link_libraries(${PROJECT_NAME} PUBLIC OpenEXR::OpenEXR)
 endif()
 
 if(BUILD_XBOX_EXTS_SCARLETT AND WIN32)
